@@ -81,12 +81,14 @@ def _load_config_passthrough() -> frozenset[str]:
 def is_env_passthrough(var_name: str) -> bool:
     """Check whether *var_name* is allowed to pass through to sandboxes.
 
-    Returns ``True`` if the variable was registered by a skill or listed in
-    the user's ``tools.env_passthrough`` config.
+    Returns ``True`` if the variable was registered by a skill, listed in
+    the user's ``terminal.env_passthrough`` config, or if the config
+    contains ``"*"`` (pass through everything — for trusted/self-use agents).
     """
     if var_name in _get_allowed():
         return True
-    return var_name in _load_config_passthrough()
+    cfg = _load_config_passthrough()
+    return "*" in cfg or var_name in cfg
 
 
 def get_all_passthrough() -> frozenset[str]:
